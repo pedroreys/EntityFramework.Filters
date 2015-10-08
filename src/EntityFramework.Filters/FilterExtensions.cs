@@ -39,7 +39,11 @@ namespace EntityFramework.Filters
 
             var eventInfo = internalContext.GetType().GetEvent("OnDisposing", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
-            eventInfo.AddEventHandler(internalContext, new EventHandler<EventArgs>((o, e) => FilterConfigurations.TryRemove(key, out config)));
+            eventInfo.AddEventHandler(internalContext, new EventHandler<EventArgs>((o, e) =>
+            {
+                FilterConfigurations.TryRemove(key, out config);
+                Console.WriteLine("Remove Filter Configuration");
+            }));
 
             return config;
         }
@@ -53,7 +57,33 @@ namespace EntityFramework.Filters
 
             var eventInfo = internalContext.GetType().GetEvent("OnDisposing", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
-            eventInfo.AddEventHandler(internalContext, new EventHandler<EventArgs>((o, e) => FilterConfigurations.TryRemove(key, out config)));
+            eventInfo.AddEventHandler(internalContext, new EventHandler<EventArgs>((o, e) =>
+            {
+                FilterConfigurations.TryRemove(key, out config);
+                Console.WriteLine("Disable Filter Configuration");
+            }));
+        }
+
+        public static void WhatFiltersDoIHave(this DbContext context)
+        {
+            Console.WriteLine("Configured EntityFramework Filters:");
+            Console.WriteLine("--------------------------------------------------------------------------------------------------------------");
+            foreach (var configuration in FilterConfigurations)
+            {
+                Console.WriteLine("{0}\t[{1}]",configuration.Value.FilterName, configuration.Value.IsEnabled ? "Enabled" : "Disabled");
+            }
+            Console.WriteLine("--------------------------------------------------------------------------------------------------------------");
+        }
+
+        public static void WhatFiltersDoIHave()
+        {
+            Console.WriteLine("Configured EntityFramework Filters:");
+            Console.WriteLine("--------------------------------------------------------------------------------------------------------------");
+            foreach (var configuration in FilterConfigurations)
+            {
+                Console.WriteLine("{0}\t[{1}]", configuration.Value.FilterName, configuration.Value.IsEnabled ? "Enabled" : "Disabled");
+            }
+            Console.WriteLine("--------------------------------------------------------------------------------------------------------------");
         }
 
         internal static object GetInternalContext(this DbContext context)

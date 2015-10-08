@@ -9,9 +9,9 @@
     {
         public Examples()
         {
-            //Database.SetInitializer(new DropCreateDatabaseAlways<ExampleContext>());
-            //SeedDb();
-            //Database.SetInitializer(new CreateDatabaseIfNotExists<ExampleContext>());
+            Database.SetInitializer(new DropCreateDatabaseAlways<ExampleContext>());
+            SeedDb();
+            Database.SetInitializer(new CreateDatabaseIfNotExists<ExampleContext>());
         }
 
         [Fact]
@@ -37,7 +37,7 @@
                 context.CurrentTenant = tenant;
                 context.EnableFilter("Tenant")
                     .SetParameter("tenantId", tenant.TenantId);
-
+                context.WhatFiltersDoIHave();
                 Assert.Equal(1, context.BlogEntries.Count());
             }
 
